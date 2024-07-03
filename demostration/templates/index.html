@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBTI Test</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5 text-center">MBTI Test</h1>
+        <div class="progress mt-4">
+            <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+        </div>
+        <div id="question-container" class="mt-4">
+            <!-- Questions will be dynamically loaded here -->
+        </div>
+        <button id="next-button" class="btn btn-primary mt-3" style="display: none;">Next</button>
+        <h2 class="mt-5 text-center" id="result"></h2>
+    </div>
+
+    <script>
+        const questions = {{ questions | tojson }};
+        let currentQuestion = 0;
+        let answers = [];
+        const totalQuestions = questions.length;
+
+        function updateProgressBar() {
+            const progress = ((currentQuestion / totalQuestions) * 100).toFixed(0);
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-bar').setAttribute('aria-valuenow', progress);
+            document.getElementById('progress-bar').innerText = `${progress}%`;
+        }
+
+        function loadQuestion() {
+            if (currentQuestion < questions.length) {
+                const question = questions[currentQuestion];
+                document.getElementById('question-container').innerHTML = `
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Pregunta #${currentQuestion + 1}: ${question.question}</h5>
+                            <button class="btn btn-outline-primary" onclick="submitAnswer(${question.value})">Sí</button>
+                            <button class="btn btn-outline-secondary" onclick="submitAnswer(0)">No</button>
+                            <button class="btn btn-outline-warning" onclick="submitAnswer(${question.value / 2})">No sé</button>
+                        </div>
+                    </div>
+                `;
+                updateProgressBar();
+            } else {
+                submitTest();
+            }
+        }
+
+        function submitAnswer(value) {
+            answers.push(value);
+            currentQuestion++;
+            loadQuestion();
+        }
+
+        function submitTest() {
+            fetch('/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({answers: answers}),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerText = `Tu personalidad podría ser: ${data.result}`;
+                document.getElementById('question-container').innerHTML = '';
+                document.getElementById('progress-bar').style.width = '100%';
+                document.getElementById('progress-bar').setAttribute('aria-valuenow', '100');
+                document.getElementById('progress-bar').innerText = '100%';
+            });
+        }
+
+        document.getElementById('next-button').addEventListener('click', loadQuestion);
+
+        loadQuestion(); // Initial load
+    </script>
+</body>
+</html>
