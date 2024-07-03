@@ -1,8 +1,8 @@
 
 ### MBTI Personality Test Calculation Process
-![Captura de Pantalla 1](SS readme/1.PNG)
-![Captura de Pantalla 1](readme/2.PNG)
-![Captura de Pantalla 1](readme/3.PNG)
+![Captura de Pantalla 1](1.PNG)
+![Captura de Pantalla 2](2.PNG)
+![Captura de Pantalla 3](3.PNG)
 
 
 **Input:**
