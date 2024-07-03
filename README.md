@@ -1,5 +1,9 @@
 
 ### MBTI Personality Test Calculation Process
+![Captura de Pantalla 1](readme/1.PNG)
+![Captura de Pantalla 1](readme/2.PNG)
+![Captura de Pantalla 1](readme/3.PNG)
+
 
 **Input:**
 User responses are sent to the backend as a JSON object via a POST request.
